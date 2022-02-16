@@ -1,13 +1,13 @@
-class Content {
-  final int id;
-  final String content;
-  final String? answer;
-  final bool hasBeenAsked;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const Content({
-    required this.id,
-    required this.content,
-    required this.answer,
-    required this.hasBeenAsked,
-  });
+part 'content.freezed.dart';
+
+@freezed
+class Content with _$Content {
+  const factory Content({
+    required int id,
+    required String content,
+    String? answer,
+    required bool hasBeenAsked,
+  }) = _Content;
 }
