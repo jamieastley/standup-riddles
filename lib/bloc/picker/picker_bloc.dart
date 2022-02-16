@@ -1,86 +1,59 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:standup_games/domain/picker_name.dart';
-import 'package:standup_games/repository/picker_repository.dart';
 
+import '../../domain/picker.dart';
+import '../../extensions/picker_extensions.dart';
+import '../../repository/picker_repository.dart';
+
+export '../../extensions/picker_extensions.dart';
+
+part 'picker_bloc.freezed.dart';
 part 'picker_event.dart';
 part 'picker_state.dart';
 
 class PickerBloc extends Bloc<PickerEvent, PickerState> {
-  final _debounceStream = BehaviorSubject<int>();
   final _repository = GetIt.I<PickerRepository>();
-  StreamSubscription<List<PickerName>>? _pickerStream;
+  StreamSubscription<List<Picker>>? _pickerStream;
 
   Duration get debounceTime => const Duration(milliseconds: 800);
 
-  PickerBloc() : super(PickerEmpty()) {
-    _debounceStream.debounceTime(debounceTime).listen((event) {
-      final currentList = List.from((state as PickerReady).pendingPickers);
-      final PickerName result = currentList[event];
-      add(_PickerDebouncedEvent(result));
+  PickerBloc() : super(const PickerState.empty()) {
+    on<_Insert>((event, emit) {
+      final values = event.value.split(',').map((e) => e.trim()).toList();
+      return _repository.insertAllValues(values);
     });
 
-    on<PickerTickEvent>((event, emit) => _debounceStream.add(event.index));
-
-    on<InsertPickerValue>(
-        (event, emit) => _repository.insertValue(event.value));
-
-    on<LoadPickerValues>((event, emit) async {
-      _pickerStream?.cancel();
+    on<_Load>((event, emit) async {
+      await _pickerStream?.cancel();
       _pickerStream = _repository.getPickerNames().listen((event) {
-        add(_PickerStreamUpdated(event));
+        add(PickerEvent.streamUpdated(event));
       });
     });
 
-    on<_PickerStreamUpdated>((event, emit) {
-      if (event.pickerList.isNotEmpty) {
-        final List<PickerName> pending =
-            event.pickerList.where((e) => e.hasBeenPicked == false).toList();
-        final List<PickerName> pastPickers =
-            event.pickerList.where((e) => e.hasBeenPicked == true).toList();
-        emit(PickerReady(
-          pastPickers: pastPickers,
-          pendingPickers: pending,
-          allPickers: event.pickerList,
+    on<_StreamUpdated>((event, emit) {
+      if (event.pickers.isNotEmpty) {
+        emit(PickerState.loaded(
+          pendingPickers: event.pickers.filterOnlyPending(),
+          previousPickers: event.pickers.filterOnlyPreviousPicks(),
         ));
       } else {
-        emit(PickerEmpty());
+        emit(const PickerState.empty());
       }
     });
 
-    on<RemovePicker>((event, emit) => _repository.removeValue(event.picker));
+    on<_Remove>((event, emit) => _repository.removeValue(event.id));
 
-    on<TogglePicked>(((event, emit) async =>
-        await _repository.togglePicked(event.pickerName)));
+    on<_Toggle>((event, emit) => _repository.togglePicked(event.picker));
 
-    on<_PickerDebouncedEvent>(
-      (event, emit) {
-        debugPrint('${event.pickedName.name} picked');
-        emit(
-          PickerValueSelected(
-            pickedValue: event.pickedName,
-            allPickers: [
-              ...List.from((state as PickerReady).pastPickers),
-              ...List.from((state as PickerReady).pendingPickers),
-            ],
-            pastPickers: List.from((state as PickerReady).pastPickers),
-            pendingPickers: List.from((state as PickerReady).pendingPickers),
-          ),
-        );
-      },
-    );
-
-    add(LoadPickerValues());
+    add(const PickerEvent.load());
   }
 
   @override
   Future<void> close() {
     _pickerStream?.cancel();
-    _debounceStream.close();
     return super.close();
   }
 }
