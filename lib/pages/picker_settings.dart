@@ -19,13 +19,45 @@ class PickerSettings extends StatelessWidget {
             const _InputRowSliver(),
             BlocBuilder<PickerBloc, PickerState>(
               builder: (context, state) => state.maybeWhen(
-                loaded: (pending, _) => _PickerListSliver(contentList: pending),
+                loaded: (pending, _) {
+                  if (pending.isNotEmpty) {
+                    return const SliverToBoxAdapter(
+                      child: Center(
+                        child: Padding(padding: EdgeInsets.all(8), child: Text('Pending')),
+                      ),
+                    );
+                  } else {
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  }
+                },
                 orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
             BlocBuilder<PickerBloc, PickerState>(
               builder: (context, state) => state.maybeWhen(
-                loaded: (_, previous) => _PickerListSliver(contentList: previous),
+                loaded: (pending, _) => _PickerSliverList(contentList: pending),
+                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+              ),
+            ),
+            BlocBuilder<PickerBloc, PickerState>(
+              builder: (context, state) => state.maybeWhen(
+                loaded: (_, previous) {
+                  if (previous.isNotEmpty) {
+                    return const SliverToBoxAdapter(
+                      child: Center(
+                        child: Padding(padding: EdgeInsets.all(8), child: Text('Picked')),
+                      ),
+                    );
+                  } else {
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  }
+                },
+                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+              ),
+            ),
+            BlocBuilder<PickerBloc, PickerState>(
+              builder: (context, state) => state.maybeWhen(
+                loaded: (_, previous) => _PickerSliverList(contentList: previous),
                 orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
@@ -54,10 +86,11 @@ class _InputRowSliver extends StatefulWidget {
 
 class _InputRowSliverState extends State<_InputRowSliver> {
   late final TextEditingController controller;
-  final focusNode = FocusNode();
+  late final FocusNode focusNode;
 
   @override
   void initState() {
+    focusNode = FocusNode();
     controller = TextEditingController();
     super.initState();
   }
@@ -71,36 +104,44 @@ class _InputRowSliverState extends State<_InputRowSliver> {
 
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                autofocus: true,
-                controller: controller,
-                focusNode: focusNode,
-                decoration: const InputDecoration(hintText: 'Picker value'),
-                onChanged: (value) => setState(() {}),
-                onSubmitted: (value) => _submit(value),
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: OutlinedButton.icon(
-                    onPressed: controller.text.isNotEmpty ? () => _submit(controller.text) : null,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Item'),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 650,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    autofocus: true,
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(hintText: 'Comma-separated values...'),
+                    onChanged: (value) => setState(() {}),
+                    onSubmitted: (value) => _submit(value),
                   ),
-                ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: OutlinedButton.icon(
+                        onPressed:
+                            controller.text.isNotEmpty ? () => _submit(controller.text) : null,
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Picker(s)'),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
 
   void _submit(String value) {
-    BlocProvider.of<PickerBloc>(context).add(PickerEvent.insert(value));
+    context.read<PickerBloc>().add(PickerEvent.insert(value));
 
     controller.clear();
     focusNode.unfocus();
@@ -108,9 +149,9 @@ class _InputRowSliverState extends State<_InputRowSliver> {
   }
 }
 
-class _PickerListSliver extends StatelessWidget {
+class _PickerSliverList extends StatelessWidget {
   final List<Picker> contentList;
-  const _PickerListSliver({
+  const _PickerSliverList({
     required this.contentList,
     Key? key,
   }) : super(key: key);
@@ -121,11 +162,10 @@ class _PickerListSliver extends StatelessWidget {
           (BuildContext context, index) {
             final item = contentList[index];
             return SettingsListItem(
-              hasBeenPicked: item.hasBeenPicked,
               title: item.name,
-              onTogglePicked: () =>
-                  BlocProvider.of<PickerBloc>(context).add(PickerEvent.togglePicked(item)),
-              onDelete: () => BlocProvider.of<PickerBloc>(context).add(PickerEvent.remove(item.id)),
+              hasBeenPicked: item.hasBeenPicked,
+              onTogglePicked: () => context.read<PickerBloc>().add(PickerEvent.togglePicked(item)),
+              onDelete: () => context.read<PickerBloc>().add(PickerEvent.remove(item.id)),
             );
           },
           childCount: contentList.length,

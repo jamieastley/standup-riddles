@@ -55,8 +55,11 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
       ));
     });
 
-    on<_Insert>((event, emit) async =>
-        repository.insertContent(content: event.content, answer: event.answer));
+    on<_Insert>((event, emit) async {
+      final trimmedContent = event.content.trim();
+      final trimmedAnswer = event.answer?.trim();
+      return repository.insertContent(content: trimmedContent, answer: trimmedAnswer);
+    });
 
     on<_Toggle>((event, emit) async => repository.updateContentAsked(event.content));
 

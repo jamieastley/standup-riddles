@@ -15,13 +15,13 @@ class AppDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextButton.icon(
-                label: const Text('Picker values'),
+                label: const Text('Picker settings'),
                 onPressed: () => GoRouter.of(context).goNamed(PickerSettings.routeName),
                 icon: const Icon(Icons.settings_suggest_rounded),
               ),
               const SizedBox(height: 24),
               TextButton.icon(
-                label: const Text('Content values'),
+                label: const Text('Content settings'),
                 onPressed: () => GoRouter.of(context).goNamed(ContentSettings.routeName),
                 icon: const Icon(Icons.notes_rounded),
               ),
