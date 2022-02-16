@@ -2,18 +2,17 @@ import 'dart:async';
 
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
-import 'package:standup_games/domain/content.dart' as domain;
-import 'package:standup_games/infrastructure/isar_database/models/content.dart';
+
+import '../domain/content.dart' as domain;
+import '../infrastructure/isar_database/models/content.dart';
 
 class ContentRepository {
   final _isar = GetIt.I<Isar>();
 
   ContentRepository();
 
-  Stream<List<domain.Content>> getContentStream() => _isar.contents
-          .where()
-          .watch(initialReturn: true)
-          .transform(StreamTransformer.fromHandlers(
+  Stream<List<domain.Content>> getContentStream() =>
+      _isar.contents.where().watch(initialReturn: true).transform(StreamTransformer.fromHandlers(
         handleData: (data, sink) {
           final transformed = data
               .map((e) => domain.Content(
@@ -38,9 +37,8 @@ class ContentRepository {
         });
   }
 
-  Future<void> updateContentAsked(domain.Content content) async =>
-      await _isar.writeTxn(
-        (isar) async => await isar.contents.put(
+  Future<void> updateContentAsked(domain.Content content) async => _isar.writeTxn(
+        (isar) async => isar.contents.put(
           Content()
             ..id = content.id
             ..content = content.content
@@ -49,6 +47,6 @@ class ContentRepository {
         ),
       );
 
-  Future<void> removeContent(domain.Content content) async => await _isar
-      .writeTxn((isar) async => await isar.contents.delete(content.id));
+  Future<void> removeContent(int id) async =>
+      _isar.writeTxn((isar) async => isar.contents.delete(id));
 }
