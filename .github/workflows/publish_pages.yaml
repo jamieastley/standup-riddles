@@ -18,3 +18,6 @@ jobs:
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
           baseHref: /standup-riddles/
+          webRenderer: canvaskit
+          customArgs: >
+            --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"

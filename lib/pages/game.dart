@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fimber/fimber.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,7 +55,8 @@ class _PickerPageState extends State<PickerPage> {
                   children: [
                     Center(child: _PickerView(controller: controller)),
                     BlocListener<PickerSelectorBloc, PickerSelectorState>(
-                      listenWhen: (previous, current) => current is PickerSelected,
+                      listenWhen: (previous, current) =>
+                          current is PickerSelected,
                       listener: (context, state) {
                         final castState = state as PickerSelected;
 
@@ -84,7 +86,11 @@ class _PickerWheel extends StatelessWidget {
   final FixedExtentScrollController controller;
   final List<Picker> pickers;
 
-  const _PickerWheel({required this.controller, required this.pickers, Key? key}) : super(key: key);
+  const _PickerWheel({
+    required this.controller,
+    required this.pickers,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(
@@ -94,7 +100,7 @@ class _PickerWheel extends StatelessWidget {
           itemExtent: 65,
           scrollController: controller,
           onSelectedItemChanged: (value) {
-            debugPrint('Pos: ${controller.position.pixels}');
+            Fimber.d('Pos: ${controller.position.pixels}');
             context.read<PickerSelectorBloc>().add(PickerSelectorEvent.tick(
                   index: value,
                   pickers: pickers,
@@ -106,7 +112,10 @@ class _PickerWheel extends StatelessWidget {
                     e.name,
                     key: ObjectKey(e),
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.button!.copyWith(fontSize: 50),
+                    style: Theme.of(context)
+                        .textTheme
+                        .button!
+                        .copyWith(fontSize: 50),
                   ))
               .toList(),
         ),
@@ -116,14 +125,19 @@ class _PickerWheel extends StatelessWidget {
 class _PickerView extends StatelessWidget {
   final FixedExtentScrollController controller;
 
-  const _PickerView({required this.controller, Key? key}) : super(key: key);
+  const _PickerView({
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => BlocConsumer<PickerBloc, PickerState>(
-        listenWhen: (previous, current) => current is PickerStateSelected && previous != current,
+        listenWhen: (previous, current) =>
+            current is PickerStateSelected && previous != current,
         listener: (context, state) {},
         buildWhen: (previousState, currentState) {
-          if (previousState is PickerStateLoaded && currentState is PickerStateSelected) {
+          if (previousState is PickerStateLoaded &&
+              currentState is PickerStateSelected) {
             return false;
           } else {
             return previousState != currentState;
@@ -136,7 +150,8 @@ class _PickerView extends StatelessWidget {
               const Text('No pickers yet!'),
               const SizedBox(height: 16),
               TextButton.icon(
-                onPressed: () => GoRouter.of(context).goNamed(PickerSettings.routeName),
+                onPressed: () =>
+                    GoRouter.of(context).goNamed(PickerSettings.routeName),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Pickers'),
               ),
@@ -154,7 +169,8 @@ class _PickerView extends StatelessWidget {
                 const Text('No pending pickers left!'),
                 const SizedBox(height: 16),
                 TextButton.icon(
-                  onPressed: () => GoRouter.of(context).goNamed(PickerSettings.routeName),
+                  onPressed: () =>
+                      GoRouter.of(context).goNamed(PickerSettings.routeName),
                   icon: const Icon(Icons.add),
                   label: const Text('Add Pickers'),
                 ),
@@ -162,7 +178,8 @@ class _PickerView extends StatelessWidget {
             }
           },
           orElse: () => ElevatedButton.icon(
-            onPressed: () => GoRouter.of(context).goNamed(PickerSettings.routeName),
+            onPressed: () =>
+                GoRouter.of(context).goNamed(PickerSettings.routeName),
             icon: const Icon(Icons.add),
             label: const Text('Add Items'),
           ),
@@ -174,7 +191,10 @@ class _SpinFAB extends StatelessWidget {
   final FixedExtentScrollController controller;
   static const _iconSize = 48.0;
 
-  const _SpinFAB({required this.controller, Key? key}) : super(key: key);
+  const _SpinFAB({
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => BlocBuilder<PickerBloc, PickerState>(
@@ -183,19 +203,20 @@ class _SpinFAB extends StatelessWidget {
           loaded: (pending, previous) => FloatingActionButton(
             onPressed: () {
               final random = Random().nextInt(5000) + 1000;
-              debugPrint('Offset: ${controller.offset}');
+              Fimber.d('Offset: ${controller.offset}');
               controller.animateTo(
                 random.toDouble() + controller.position.pixels,
                 duration: const Duration(seconds: 5),
                 curve: Curves.easeOut,
               );
             },
-            child: const Center(child: Icon(Ionicons.dice_outline, size: _iconSize)),
+            child: const Center(
+                child: Icon(Ionicons.dice_outline, size: _iconSize)),
           ),
           pickerSelected: (_, __, ___) => FloatingActionButton(
             onPressed: () {
               final random = Random().nextInt(5000);
-              debugPrint('Offset: ${controller.offset}');
+              Fimber.d('Offset: ${controller.offset}');
               controller.animateTo(
                 random.toDouble(),
                 duration: const Duration(seconds: 5),

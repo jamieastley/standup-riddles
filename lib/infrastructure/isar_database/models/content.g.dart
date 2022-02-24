@@ -505,6 +505,9 @@ extension ContentQueryFilter
   }
 }
 
+extension ContentQueryLinks
+    on QueryBuilder<Content, Content, QFilterCondition> {}
+
 extension ContentQueryWhereSortBy on QueryBuilder<Content, Content, QSortBy> {
   QueryBuilder<Content, Content, QAfterSortBy> sortByAnswer() {
     return addSortByInternal('answer', Sort.asc);

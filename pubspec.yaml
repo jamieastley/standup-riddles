@@ -1,5 +1,5 @@
 name: standup_games
-description: A new Flutter project.
+description: An animated wheel picker to randomly select victims for standup icebreakers, but with more confetti.
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -11,6 +11,7 @@ environment:
 dependencies:
   confetti: ^0.6.0
   cupertino_icons: ^1.0.2
+  fimber: ^0.6.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
@@ -24,6 +25,7 @@ dependencies:
   path: ^1.8.0
   path_provider: ^2.0.0
   rxdart: ^0.27.3
+  sentry_flutter: ^6.3.0
   sqlite3_flutter_libs: ^0.5.0
 
 dev_dependencies:

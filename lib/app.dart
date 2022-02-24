@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'bloc/bloc/picker_selector_bloc.dart';
 import 'bloc/content/content_bloc.dart';
@@ -27,6 +28,7 @@ class _AppState extends State<App> {
     router = GoRouter(
       debugLogDiagnostics: true,
       urlPathStrategy: UrlPathStrategy.path,
+      observers: [SentryNavigatorObserver()],
       routes: [
         GoRoute(
           name: PickerPage.routeName,
@@ -58,7 +60,8 @@ class _AppState extends State<App> {
         providers: [
           BlocProvider<PickerBloc>(create: (context) => PickerBloc()),
           BlocProvider<ContentBloc>(create: (context) => ContentBloc()),
-          BlocProvider<PickerSelectorBloc>(create: (context) => PickerSelectorBloc()),
+          BlocProvider<PickerSelectorBloc>(
+              create: (context) => PickerSelectorBloc()),
         ],
         child: MaterialApp.router(
           theme: AppTheme.lightTheme,

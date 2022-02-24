@@ -21,13 +21,13 @@ class _$ContentTearOff {
   _Content call(
       {required int id,
       required String content,
-      String? answer,
-      required bool hasBeenAsked}) {
+      required bool hasBeenAsked,
+      String? answer}) {
     return _Content(
       id: id,
       content: content,
-      answer: answer,
       hasBeenAsked: hasBeenAsked,
+      answer: answer,
     );
   }
 }
@@ -39,8 +39,8 @@ const $Content = _$ContentTearOff();
 mixin _$Content {
   int get id => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
-  String? get answer => throw _privateConstructorUsedError;
   bool get hasBeenAsked => throw _privateConstructorUsedError;
+  String? get answer => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ContentCopyWith<Content> get copyWith => throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ mixin _$Content {
 abstract class $ContentCopyWith<$Res> {
   factory $ContentCopyWith(Content value, $Res Function(Content) then) =
       _$ContentCopyWithImpl<$Res>;
-  $Res call({int id, String content, String? answer, bool hasBeenAsked});
+  $Res call({int id, String content, bool hasBeenAsked, String? answer});
 }
 
 /// @nodoc
@@ -65,8 +65,8 @@ class _$ContentCopyWithImpl<$Res> implements $ContentCopyWith<$Res> {
   $Res call({
     Object? id = freezed,
     Object? content = freezed,
-    Object? answer = freezed,
     Object? hasBeenAsked = freezed,
+    Object? answer = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed
@@ -77,14 +77,14 @@ class _$ContentCopyWithImpl<$Res> implements $ContentCopyWith<$Res> {
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      answer: answer == freezed
-          ? _value.answer
-          : answer // ignore: cast_nullable_to_non_nullable
-              as String?,
       hasBeenAsked: hasBeenAsked == freezed
           ? _value.hasBeenAsked
           : hasBeenAsked // ignore: cast_nullable_to_non_nullable
               as bool,
+      answer: answer == freezed
+          ? _value.answer
+          : answer // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -94,7 +94,7 @@ abstract class _$ContentCopyWith<$Res> implements $ContentCopyWith<$Res> {
   factory _$ContentCopyWith(_Content value, $Res Function(_Content) then) =
       __$ContentCopyWithImpl<$Res>;
   @override
-  $Res call({int id, String content, String? answer, bool hasBeenAsked});
+  $Res call({int id, String content, bool hasBeenAsked, String? answer});
 }
 
 /// @nodoc
@@ -110,8 +110,8 @@ class __$ContentCopyWithImpl<$Res> extends _$ContentCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? content = freezed,
-    Object? answer = freezed,
     Object? hasBeenAsked = freezed,
+    Object? answer = freezed,
   }) {
     return _then(_Content(
       id: id == freezed
@@ -122,14 +122,14 @@ class __$ContentCopyWithImpl<$Res> extends _$ContentCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      answer: answer == freezed
-          ? _value.answer
-          : answer // ignore: cast_nullable_to_non_nullable
-              as String?,
       hasBeenAsked: hasBeenAsked == freezed
           ? _value.hasBeenAsked
           : hasBeenAsked // ignore: cast_nullable_to_non_nullable
               as bool,
+      answer: answer == freezed
+          ? _value.answer
+          : answer // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -140,21 +140,21 @@ class _$_Content implements _Content {
   const _$_Content(
       {required this.id,
       required this.content,
-      this.answer,
-      required this.hasBeenAsked});
+      required this.hasBeenAsked,
+      this.answer});
 
   @override
   final int id;
   @override
   final String content;
   @override
-  final String? answer;
-  @override
   final bool hasBeenAsked;
+  @override
+  final String? answer;
 
   @override
   String toString() {
-    return 'Content(id: $id, content: $content, answer: $answer, hasBeenAsked: $hasBeenAsked)';
+    return 'Content(id: $id, content: $content, hasBeenAsked: $hasBeenAsked, answer: $answer)';
   }
 
   @override
@@ -164,9 +164,9 @@ class _$_Content implements _Content {
             other is _Content &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.content, content) &&
-            const DeepCollectionEquality().equals(other.answer, answer) &&
             const DeepCollectionEquality()
-                .equals(other.hasBeenAsked, hasBeenAsked));
+                .equals(other.hasBeenAsked, hasBeenAsked) &&
+            const DeepCollectionEquality().equals(other.answer, answer));
   }
 
   @override
@@ -174,8 +174,8 @@ class _$_Content implements _Content {
       runtimeType,
       const DeepCollectionEquality().hash(id),
       const DeepCollectionEquality().hash(content),
-      const DeepCollectionEquality().hash(answer),
-      const DeepCollectionEquality().hash(hasBeenAsked));
+      const DeepCollectionEquality().hash(hasBeenAsked),
+      const DeepCollectionEquality().hash(answer));
 
   @JsonKey(ignore: true)
   @override
@@ -187,17 +187,17 @@ abstract class _Content implements Content {
   const factory _Content(
       {required int id,
       required String content,
-      String? answer,
-      required bool hasBeenAsked}) = _$_Content;
+      required bool hasBeenAsked,
+      String? answer}) = _$_Content;
 
   @override
   int get id;
   @override
   String get content;
   @override
-  String? get answer;
-  @override
   bool get hasBeenAsked;
+  @override
+  String? get answer;
   @override
   @JsonKey(ignore: true)
   _$ContentCopyWith<_Content> get copyWith =>
