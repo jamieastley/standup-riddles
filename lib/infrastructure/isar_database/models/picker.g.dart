@@ -378,6 +378,8 @@ extension PickerQueryFilter on QueryBuilder<Picker, Picker, QFilterCondition> {
   }
 }
 
+extension PickerQueryLinks on QueryBuilder<Picker, Picker, QFilterCondition> {}
+
 extension PickerQueryWhereSortBy on QueryBuilder<Picker, Picker, QSortBy> {
   QueryBuilder<Picker, Picker, QAfterSortBy> sortByHasBeenPicked() {
     return addSortByInternal('hasBeenPicked', Sort.asc);
