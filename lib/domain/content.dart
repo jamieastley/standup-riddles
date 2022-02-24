@@ -7,7 +7,7 @@ class Content with _$Content {
   const factory Content({
     required int id,
     required String content,
-    String? answer,
     required bool hasBeenAsked,
+    String? answer,
   }) = _Content;
 }

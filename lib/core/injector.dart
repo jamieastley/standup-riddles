@@ -4,21 +4,15 @@ import 'package:isar/isar.dart';
 
 import '../infrastructure/isar_database/models/content.dart';
 import '../infrastructure/isar_database/models/picker.dart';
+import '../infrastructure/isar_database/platform/isar_platform.dart';
 import '../repository/content_repository.dart';
 import '../repository/picker_repository.dart';
 
 class Injector {
   Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    GetIt.I.registerSingletonAsync<Isar>(() async => Isar.open(
-          schemas: [
-            ContentSchema,
-            PickerSchema,
-          ],
-          directory: '',
-          // directory: dir.path,
-          // inspector: true,
-        ));
+    GetIt.I.registerSingletonAsync<Isar>(() async => IsarPlatform()
+        .init([ContentSchema, PickerSchema], enableInspector: true));
 
     GetIt.I.registerSingletonWithDependencies<ContentRepository>(
       () => ContentRepository(),
