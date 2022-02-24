@@ -6,10 +6,10 @@ import 'bloc/app_bloc_observer.dart';
 import 'core/injector.dart';
 
 Future<void> main() async {
-  await Injector().init();
-
-  BlocOverrides.runZoned(
-    () => runApp(const App()),
+  await BlocOverrides.runZoned(
+    () async {
+      await Injector().init(() => runApp(const App()));
+    },
     blocObserver: AppBlocObserver(),
   );
 }
