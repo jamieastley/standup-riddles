@@ -1,5 +1,5 @@
 name: standup_games
-description: A new Flutter project.
+description: An animated wheel picker to randomly select victims for standup icebreakers, but with more confetti.
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
