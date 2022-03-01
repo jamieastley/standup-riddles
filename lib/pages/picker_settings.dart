@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/picker/picker_bloc.dart';
+import '../core/consts.dart';
 import '../domain/picker.dart';
 import '../widgets/settings_list_item.dart';
 
@@ -23,20 +24,24 @@ class PickerSettings extends StatelessWidget {
                   if (pending.isNotEmpty) {
                     return const SliverToBoxAdapter(
                       child: Center(
-                        child: Padding(padding: EdgeInsets.all(8), child: Text('Pending')),
+                        child: Padding(
+                            padding: EdgeInsets.all(Dimensions.spacing),
+                            child: Text('Pending')),
                       ),
                     );
                   } else {
                     return const SliverToBoxAdapter(child: SizedBox.shrink());
                   }
                 },
-                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
             BlocBuilder<PickerBloc, PickerState>(
               builder: (context, state) => state.maybeWhen(
                 loaded: (pending, _) => _PickerSliverList(contentList: pending),
-                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
             BlocBuilder<PickerBloc, PickerState>(
@@ -45,20 +50,25 @@ class PickerSettings extends StatelessWidget {
                   if (previous.isNotEmpty) {
                     return const SliverToBoxAdapter(
                       child: Center(
-                        child: Padding(padding: EdgeInsets.all(8), child: Text('Picked')),
+                        child: Padding(
+                            padding: EdgeInsets.all(Dimensions.spacing),
+                            child: Text('Picked')),
                       ),
                     );
                   } else {
                     return const SliverToBoxAdapter(child: SizedBox.shrink());
                   }
                 },
-                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
             BlocBuilder<PickerBloc, PickerState>(
               builder: (context, state) => state.maybeWhen(
-                loaded: (_, previous) => _PickerSliverList(contentList: previous),
-                orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                loaded: (_, previous) =>
+                    _PickerSliverList(contentList: previous),
+                orElse: () =>
+                    const SliverToBoxAdapter(child: SizedBox.shrink()),
               ),
             ),
           ],
@@ -106,11 +116,9 @@ class _InputRowSliverState extends State<_InputRowSliver> {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 650,
-            ),
+            constraints: const BoxConstraints(maxWidth: Dimensions.maxWidth),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(Dimensions.spacing2x),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -118,16 +126,18 @@ class _InputRowSliverState extends State<_InputRowSliver> {
                     autofocus: true,
                     controller: controller,
                     focusNode: focusNode,
-                    decoration: const InputDecoration(hintText: 'Comma-separated values...'),
+                    decoration: const InputDecoration(
+                        hintText: 'Comma-separated values...'),
                     onChanged: (value) => setState(() {}),
                     onSubmitted: (value) => _submit(value),
                   ),
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(Dimensions.spacing3x),
                       child: OutlinedButton.icon(
-                        onPressed:
-                            controller.text.isNotEmpty ? () => _submit(controller.text) : null,
+                        onPressed: controller.text.isNotEmpty
+                            ? () => _submit(controller.text)
+                            : null,
                         icon: const Icon(Icons.add),
                         label: const Text('Add Picker(s)'),
                       ),
@@ -161,11 +171,21 @@ class _PickerSliverList extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, index) {
             final item = contentList[index];
-            return SettingsListItem(
-              title: item.name,
-              hasBeenPicked: item.hasBeenPicked,
-              onTogglePicked: () => context.read<PickerBloc>().add(PickerEvent.togglePicked(item)),
-              onDelete: () => context.read<PickerBloc>().add(PickerEvent.remove(item.id)),
+            return Center(
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxWidth: Dimensions.maxWidth),
+                child: SettingsListItem(
+                  title: item.name,
+                  hasBeenPicked: item.hasBeenPicked,
+                  onTogglePicked: () => context
+                      .read<PickerBloc>()
+                      .add(PickerEvent.togglePicked(item)),
+                  onDelete: () => context
+                      .read<PickerBloc>()
+                      .add(PickerEvent.remove(item.id)),
+                ),
+              ),
             );
           },
           childCount: contentList.length,
