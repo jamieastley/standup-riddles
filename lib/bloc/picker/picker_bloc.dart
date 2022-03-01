@@ -22,8 +22,11 @@ class PickerBloc extends Bloc<PickerEvent, PickerState> {
 
   PickerBloc() : super(const PickerState.empty()) {
     on<_Insert>((event, emit) {
-      final values = event.value.split(',').map((e) => e.trim()).toList();
-      return _repository.insertAllValues(values);
+      if (event.value.trim().isNotEmpty) {
+        final values = event.value.split(',').map((e) => e.trim()).toList()
+          ..removeWhere((e) => e.trim().isEmpty);
+        return _repository.insertAllValues(values);
+      }
     });
 
     on<_Load>((event, emit) async {
