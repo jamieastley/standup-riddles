@@ -6,219 +6,201 @@ part of 'content.dart';
 // IsarCollectionGenerator
 // **************************************************************************
 
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, unused_local_variable
 
 extension GetContentCollection on Isar {
-  IsarCollection<Content> get contents {
-    return getCollection('Content');
-  }
+  IsarCollection<Content> get contents => getCollection();
 }
 
-final ContentSchema = CollectionSchema(
+const ContentSchema = CollectionSchema(
   name: 'Content',
   schema:
       '{"name":"Content","idName":"id","properties":[{"name":"answer","type":"String"},{"name":"content","type":"String"},{"name":"hasBeenAsked","type":"Bool"}],"indexes":[],"links":[]}',
-  nativeAdapter: const _ContentNativeAdapter(),
-  webAdapter: const _ContentWebAdapter(),
   idName: 'id',
   propertyIds: {'answer': 0, 'content': 1, 'hasBeenAsked': 2},
   listProperties: {},
   indexIds: {},
-  indexTypes: {},
+  indexValueTypes: {},
   linkIds: {},
-  backlinkIds: {},
-  linkedCollections: [],
-  getId: (obj) {
-    if (obj.id == Isar.autoIncrement) {
-      return null;
-    } else {
-      return obj.id;
-    }
-  },
-  setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [],
-  version: 2,
+  backlinkLinkNames: {},
+  getId: _contentGetId,
+  setId: _contentSetId,
+  getLinks: _contentGetLinks,
+  attachLinks: _contentAttachLinks,
+  serializeNative: _contentSerializeNative,
+  deserializeNative: _contentDeserializeNative,
+  deserializePropNative: _contentDeserializePropNative,
+  serializeWeb: _contentSerializeWeb,
+  deserializeWeb: _contentDeserializeWeb,
+  deserializePropWeb: _contentDeserializePropWeb,
+  version: 3,
 );
 
-class _ContentWebAdapter extends IsarWebTypeAdapter<Content> {
-  const _ContentWebAdapter();
-
-  @override
-  Object serialize(IsarCollection<Content> collection, Content object) {
-    final jsObj = IsarNative.newJsObject();
-    IsarNative.jsObjectSet(jsObj, 'answer', object.answer);
-    IsarNative.jsObjectSet(jsObj, 'content', object.content);
-    IsarNative.jsObjectSet(jsObj, 'hasBeenAsked', object.hasBeenAsked);
-    IsarNative.jsObjectSet(jsObj, 'id', object.id);
-    return jsObj;
+int? _contentGetId(Content object) {
+  if (object.id == Isar.autoIncrement) {
+    return null;
+  } else {
+    return object.id;
   }
-
-  @override
-  Content deserialize(IsarCollection<Content> collection, dynamic jsObj) {
-    final object = Content();
-    object.answer = IsarNative.jsObjectGet(jsObj, 'answer');
-    object.content = IsarNative.jsObjectGet(jsObj, 'content') ?? '';
-    object.hasBeenAsked =
-        IsarNative.jsObjectGet(jsObj, 'hasBeenAsked') ?? false;
-    object.id = IsarNative.jsObjectGet(jsObj, 'id');
-    return object;
-  }
-
-  @override
-  P deserializeProperty<P>(Object jsObj, String propertyName) {
-    switch (propertyName) {
-      case 'answer':
-        return (IsarNative.jsObjectGet(jsObj, 'answer')) as P;
-      case 'content':
-        return (IsarNative.jsObjectGet(jsObj, 'content') ?? '') as P;
-      case 'hasBeenAsked':
-        return (IsarNative.jsObjectGet(jsObj, 'hasBeenAsked') ?? false) as P;
-      case 'id':
-        return (IsarNative.jsObjectGet(jsObj, 'id')) as P;
-      default:
-        throw 'Illegal propertyName';
-    }
-  }
-
-  @override
-  void attachLinks(Isar isar, int id, Content object) {}
 }
 
-class _ContentNativeAdapter extends IsarNativeTypeAdapter<Content> {
-  const _ContentNativeAdapter();
-
-  @override
-  void serialize(IsarCollection<Content> collection, IsarRawObject rawObj,
-      Content object, int staticSize, List<int> offsets, AdapterAlloc alloc) {
-    var dynamicSize = 0;
-    final value0 = object.answer;
-    IsarUint8List? _answer;
-    if (value0 != null) {
-      _answer = IsarBinaryWriter.utf8Encoder.convert(value0);
-    }
-    dynamicSize += (_answer?.length ?? 0) as int;
-    final value1 = object.content;
-    final _content = IsarBinaryWriter.utf8Encoder.convert(value1);
-    dynamicSize += (_content.length) as int;
-    final value2 = object.hasBeenAsked;
-    final _hasBeenAsked = value2;
-    final size = staticSize + dynamicSize;
-
-    rawObj.buffer = alloc(size);
-    rawObj.buffer_length = size;
-    final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
-    final writer = IsarBinaryWriter(buffer, staticSize);
-    writer.writeBytes(offsets[0], _answer);
-    writer.writeBytes(offsets[1], _content);
-    writer.writeBool(offsets[2], _hasBeenAsked);
-  }
-
-  @override
-  Content deserialize(IsarCollection<Content> collection, int id,
-      IsarBinaryReader reader, List<int> offsets) {
-    final object = Content();
-    object.answer = reader.readStringOrNull(offsets[0]);
-    object.content = reader.readString(offsets[1]);
-    object.hasBeenAsked = reader.readBool(offsets[2]);
-    object.id = id;
-    return object;
-  }
-
-  @override
-  P deserializeProperty<P>(
-      int id, IsarBinaryReader reader, int propertyIndex, int offset) {
-    switch (propertyIndex) {
-      case -1:
-        return id as P;
-      case 0:
-        return (reader.readStringOrNull(offset)) as P;
-      case 1:
-        return (reader.readString(offset)) as P;
-      case 2:
-        return (reader.readBool(offset)) as P;
-      default:
-        throw 'Illegal propertyIndex';
-    }
-  }
-
-  @override
-  void attachLinks(Isar isar, int id, Content object) {}
+void _contentSetId(Content object, int id) {
+  object.id = id;
 }
+
+List<IsarLinkBase> _contentGetLinks(Content object) {
+  return [];
+}
+
+void _contentSerializeNative(
+    IsarCollection<Content> collection,
+    IsarRawObject rawObj,
+    Content object,
+    int staticSize,
+    List<int> offsets,
+    AdapterAlloc alloc) {
+  var dynamicSize = 0;
+  final value0 = object.answer;
+  IsarUint8List? _answer;
+  if (value0 != null) {
+    _answer = IsarBinaryWriter.utf8Encoder.convert(value0);
+  }
+  dynamicSize += (_answer?.length ?? 0) as int;
+  final value1 = object.content;
+  final _content = IsarBinaryWriter.utf8Encoder.convert(value1);
+  dynamicSize += (_content.length) as int;
+  final value2 = object.hasBeenAsked;
+  final _hasBeenAsked = value2;
+  final size = staticSize + dynamicSize;
+
+  rawObj.buffer = alloc(size);
+  rawObj.buffer_length = size;
+  final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
+  final writer = IsarBinaryWriter(buffer, staticSize);
+  writer.writeBytes(offsets[0], _answer);
+  writer.writeBytes(offsets[1], _content);
+  writer.writeBool(offsets[2], _hasBeenAsked);
+}
+
+Content _contentDeserializeNative(IsarCollection<Content> collection, int id,
+    IsarBinaryReader reader, List<int> offsets) {
+  final object = Content();
+  object.answer = reader.readStringOrNull(offsets[0]);
+  object.content = reader.readString(offsets[1]);
+  object.hasBeenAsked = reader.readBool(offsets[2]);
+  object.id = id;
+  return object;
+}
+
+P _contentDeserializePropNative<P>(
+    int id, IsarBinaryReader reader, int propertyIndex, int offset) {
+  switch (propertyIndex) {
+    case -1:
+      return id as P;
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
+    default:
+      throw 'Illegal propertyIndex';
+  }
+}
+
+dynamic _contentSerializeWeb(
+    IsarCollection<Content> collection, Content object) {
+  final jsObj = IsarNative.newJsObject();
+  IsarNative.jsObjectSet(jsObj, 'answer', object.answer);
+  IsarNative.jsObjectSet(jsObj, 'content', object.content);
+  IsarNative.jsObjectSet(jsObj, 'hasBeenAsked', object.hasBeenAsked);
+  IsarNative.jsObjectSet(jsObj, 'id', object.id);
+  return jsObj;
+}
+
+Content _contentDeserializeWeb(
+    IsarCollection<Content> collection, dynamic jsObj) {
+  final object = Content();
+  object.answer = IsarNative.jsObjectGet(jsObj, 'answer');
+  object.content = IsarNative.jsObjectGet(jsObj, 'content') ?? '';
+  object.hasBeenAsked = IsarNative.jsObjectGet(jsObj, 'hasBeenAsked') ?? false;
+  object.id = IsarNative.jsObjectGet(jsObj, 'id');
+  return object;
+}
+
+P _contentDeserializePropWeb<P>(Object jsObj, String propertyName) {
+  switch (propertyName) {
+    case 'answer':
+      return (IsarNative.jsObjectGet(jsObj, 'answer')) as P;
+    case 'content':
+      return (IsarNative.jsObjectGet(jsObj, 'content') ?? '') as P;
+    case 'hasBeenAsked':
+      return (IsarNative.jsObjectGet(jsObj, 'hasBeenAsked') ?? false) as P;
+    case 'id':
+      return (IsarNative.jsObjectGet(jsObj, 'id')) as P;
+    default:
+      throw 'Illegal propertyName';
+  }
+}
+
+void _contentAttachLinks(IsarCollection col, int id, Content object) {}
 
 extension ContentQueryWhereSort on QueryBuilder<Content, Content, QWhere> {
   QueryBuilder<Content, Content, QAfterWhere> anyId() {
-    return addWhereClauseInternal(const WhereClause(indexName: null));
+    return addWhereClauseInternal(const IdWhereClause.any());
   }
 }
 
 extension ContentQueryWhere on QueryBuilder<Content, Content, QWhereClause> {
-  QueryBuilder<Content, Content, QAfterWhereClause> idEqualTo(int? id) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [id],
+  QueryBuilder<Content, Content, QAfterWhereClause> idEqualTo(int id) {
+    return addWhereClauseInternal(IdWhereClause.between(
+      lower: id,
       includeLower: true,
-      upper: [id],
+      upper: id,
       includeUpper: true,
     ));
   }
 
-  QueryBuilder<Content, Content, QAfterWhereClause> idNotEqualTo(int? id) {
+  QueryBuilder<Content, Content, QAfterWhereClause> idNotEqualTo(int id) {
     if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(WhereClause(
-        indexName: null,
-        upper: [id],
-        includeUpper: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: null,
-        lower: [id],
-        includeLower: false,
-      ));
+      return addWhereClauseInternal(
+        IdWhereClause.lessThan(upper: id, includeUpper: false),
+      ).addWhereClauseInternal(
+        IdWhereClause.greaterThan(lower: id, includeLower: false),
+      );
     } else {
-      return addWhereClauseInternal(WhereClause(
-        indexName: null,
-        lower: [id],
-        includeLower: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: null,
-        upper: [id],
-        includeUpper: false,
-      ));
+      return addWhereClauseInternal(
+        IdWhereClause.greaterThan(lower: id, includeLower: false),
+      ).addWhereClauseInternal(
+        IdWhereClause.lessThan(upper: id, includeUpper: false),
+      );
     }
   }
 
-  QueryBuilder<Content, Content, QAfterWhereClause> idGreaterThan(
-    int? id, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [id],
-      includeLower: include,
-    ));
+  QueryBuilder<Content, Content, QAfterWhereClause> idGreaterThan(int id,
+      {bool include = false}) {
+    return addWhereClauseInternal(
+      IdWhereClause.greaterThan(lower: id, includeLower: include),
+    );
   }
 
-  QueryBuilder<Content, Content, QAfterWhereClause> idLessThan(
-    int? id, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      upper: [id],
-      includeUpper: include,
-    ));
+  QueryBuilder<Content, Content, QAfterWhereClause> idLessThan(int id,
+      {bool include = false}) {
+    return addWhereClauseInternal(
+      IdWhereClause.lessThan(upper: id, includeUpper: include),
+    );
   }
 
   QueryBuilder<Content, Content, QAfterWhereClause> idBetween(
-    int? lowerId,
-    int? upperId, {
+    int lowerId,
+    int upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [lowerId],
+    return addWhereClauseInternal(IdWhereClause.between(
+      lower: lowerId,
       includeLower: includeLower,
-      upper: [upperId],
+      upper: upperId,
       includeUpper: includeUpper,
     ));
   }
@@ -457,7 +439,7 @@ extension ContentQueryFilter
     ));
   }
 
-  QueryBuilder<Content, Content, QAfterFilterCondition> idEqualTo(int? value) {
+  QueryBuilder<Content, Content, QAfterFilterCondition> idEqualTo(int value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
       property: 'id',
@@ -466,7 +448,7 @@ extension ContentQueryFilter
   }
 
   QueryBuilder<Content, Content, QAfterFilterCondition> idGreaterThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -478,7 +460,7 @@ extension ContentQueryFilter
   }
 
   QueryBuilder<Content, Content, QAfterFilterCondition> idLessThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -490,8 +472,8 @@ extension ContentQueryFilter
   }
 
   QueryBuilder<Content, Content, QAfterFilterCondition> idBetween(
-    int? lower,
-    int? upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
