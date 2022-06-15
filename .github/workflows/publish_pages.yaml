@@ -21,6 +21,7 @@ jobs:
           baseHref: /standup-riddles/
           webRenderer: canvaskit
           customArgs: >
+            --version ${{GITHUB_REF_NAME}}
             --source-maps
             --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
       - name: Sentry Release
@@ -31,3 +32,4 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           sourcemaps: build/web
+          version: ${{GITHUB_REF_NAME}}
